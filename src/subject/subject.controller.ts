@@ -26,4 +26,9 @@ export class SubjectController {
   findLevelAndSubject(@Param('name') name: string): InterfaceLevelSubject[] {
     return this.subjectService.levelAndSubjectFromName(name);
   }
+
+  @Get('favorite')
+  findFavorite(): string {
+    return this.subjectService.findFavorite();
+  }
 }
