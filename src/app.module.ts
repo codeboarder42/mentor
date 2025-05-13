@@ -4,9 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { ConfigModule } from './config/config.module';
-import { LevelEntity } from './level/entities/level.entity';
 import { LevelModule } from './level/level.module';
-import { SubjectEntity } from './subject/entities/subject.entity';
+import { typeOrmModuleOptions } from './ormconfig';
 import { SubjectModule } from './subject/subject.module';
 
 @Module({
@@ -16,16 +15,7 @@ import { SubjectModule } from './subject/subject.module';
     ConfigModule.forRoot({
       folder: 'config',
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'root',
-      password: 'root',
-      database: 'mentor',
-      entities: [SubjectEntity, LevelEntity],
-      synchronize: true, // Note: Set to false in production
-    }),
+    TypeOrmModule.forRoot(typeOrmModuleOptions),
   ],
   controllers: [AppController],
   providers: [AppService],
