@@ -33,18 +33,45 @@ export class SubjectService {
   }
 
   async levelAndSubjectFromName(name: string): Promise<InterfaceLevelSubject> {
-    const subject = await this.subjectRepository.findOneBy({ name });
+    // Rechercher le sujet avec son niveau associé
+    const subject = await this.subjectRepository.findOne({
+      where: { name },
+      relations: ['level'], // Charge la relation avec le niveau
+    });
+
     if (!subject) {
       throw new Error(`Subject with name ${name} not found`);
     }
+
+    // Si le niveau n'existe pas (cas improbable mais possible)
+    if (!subject.level) {
+      return {
+        subjects: [
+          {
+            // Maintenant un tableau avec un seul élément
+            id: subject.id,
+            name: subject.name,
+          },
+        ],
+        level: {
+          id: 0,
+          name: '',
+        },
+      };
+    }
+
+    // Retourne un objet conforme à l'interface InterfaceLevelSubject modifiée
     return {
-      subject: {
-        id: subject.id,
-        name: subject.name,
-      },
+      subjects: [
+        {
+          // Nous mettons le sujet actuel dans un tableau
+          id: subject.id,
+          name: subject.name,
+        },
+      ],
       level: {
-        id: subject.level?.id ?? 0,
-        name: subject.level?.name ?? '',
+        id: subject.level.id,
+        name: subject.level.name,
       },
     };
   }

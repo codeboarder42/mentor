@@ -5,5 +5,5 @@ export type InterfaceLevel = {
 
 export type InterfaceLevelSubject = {
   level: InterfaceLevel;
-  subject: InterfaceSubject;
+  subjects: InterfaceSubject[];
 };

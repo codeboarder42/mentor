@@ -1,5 +1,5 @@
 import { SubjectEntity } from 'src/subject/entities/subject.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class LevelEntity {
@@ -9,6 +9,6 @@ export class LevelEntity {
   @Column()
   name: string;
 
-  @OneToOne(() => SubjectEntity, (subject) => subject.level)
-  subject: SubjectEntity;
+  @OneToMany(() => SubjectEntity, (subject) => subject.level)
+  subjects: SubjectEntity[];
 }

@@ -19,15 +19,32 @@ export class LevelService {
   async findLevelAndSubjectbyName(
     name: string,
   ): Promise<InterfaceLevelSubject> {
-    const level = await this.levelRepository.findOneBy({ name });
+    // Relations doit être ajouté pour charger les sujets associés au niveau
+    const level = await this.levelRepository.findOne({
+      where: { name },
+      relations: ['subjects'], // Important: charge explicitement la relation
+    });
+
+    // Si le niveau n'est pas trouvé, retourner des valeurs par défaut
+    if (!level) {
+      return {
+        subjects: [], // Retourne un tableau vide de sujets
+        level: {
+          id: 0,
+          name: '',
+        },
+      };
+    }
+
+    // Retourne le niveau avec tous ses sujets
     return {
-      subject: {
-        id: level?.subject?.id ?? 0,
-        name: level?.subject?.name ?? '',
-      },
+      subjects: level.subjects.map((subject) => ({
+        id: subject.id,
+        name: subject.name,
+      })),
       level: {
-        id: level?.id ?? 0,
-        name: level?.name ?? '',
+        id: level.id,
+        name: level.name,
       },
     };
   }
