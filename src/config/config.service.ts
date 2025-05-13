@@ -11,7 +11,7 @@ export class ConfigService {
   private envConfig: EnvConfig;
 
   constructor(@Inject(CONFIG_OPTIONS) options: ConfigOptions) {
-    const fileName = `${process.env.NODE_ENV} || .env`;
+    const fileName = process.env.NODE_ENV ? process.env.NODE_ENV : '.env';
     const filePath = path.resolve(__dirname, '../..', options.folder, fileName);
     console.log(filePath);
 
@@ -19,7 +19,9 @@ export class ConfigService {
     this.envConfig = dotenv.parse(envFile);
   }
 
-  get(key: string): string {
-    return this.envConfig[key];
+  get(key: string, defaultValue?: any): any {
+    return this.envConfig[key] !== undefined
+      ? this.envConfig[key]
+      : defaultValue;
   }
 }

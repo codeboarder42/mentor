@@ -1,10 +1,11 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { LevelModule } from 'src/level/level.module';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SubjectEntity } from './entities/subject.entity';
 import { SubjectController } from './subject.controller';
 import { SubjectService } from './subject.service';
 
 @Module({
-  imports: [forwardRef(() => LevelModule)],
+  imports: [TypeOrmModule.forFeature([SubjectEntity])],
   controllers: [SubjectController],
   providers: [SubjectService],
   exports: [SubjectService],

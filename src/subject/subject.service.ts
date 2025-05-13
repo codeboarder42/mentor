@@ -1,43 +1,52 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { BddService } from 'src/bdd/bdd.service';
-import { TOKEN_LEVELS } from 'src/bdd/constante';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from 'src/config/config.service';
-import { InterfaceLevel, InterfaceLevelSubject } from 'src/level/level';
-import { SUBJECTS } from './bdd';
-import { InterfacePostSubject, InterfaceSubject } from './subject';
+import { InterfaceLevelSubject } from 'src/level/level';
+import { Repository } from 'typeorm';
+import { SubjectEntity } from './entities/subject.entity';
+import { InterfacePostSubject } from './subject';
 
 @Injectable()
 export class SubjectService {
   constructor(
-    private readonly bdd: BddService,
-    @Inject(TOKEN_LEVELS) private bddLevels: InterfaceLevel[],
+    @InjectRepository(SubjectEntity)
+    private subjectRepository: Repository<SubjectEntity>,
     private configService: ConfigService,
   ) {}
-  findAll(): InterfaceSubject[] {
-    return this.bdd.get<InterfaceSubject>('subjects');
+
+  findAll(): Promise<SubjectEntity[]> {
+    return this.subjectRepository.find();
   }
 
-  createNewSubject({
+  findOneById(id: number): Promise<SubjectEntity | null> {
+    return this.subjectRepository.findOneBy({ id });
+  }
+
+  async createNewSubject({
     name,
     levelId,
-  }: InterfacePostSubject): InterfaceSubject[] {
-    const sortedByIdSubject = this.findAll().sort((a, b) => a.id - b.id);
-    const newId = sortedByIdSubject[sortedByIdSubject.length - 1].id + 1;
-    return [...SUBJECTS, { id: newId, name: name, levelId: levelId }];
+  }: InterfacePostSubject): Promise<SubjectEntity> {
+    const newSubject = await this.subjectRepository.save({
+      name,
+    });
+    return newSubject;
   }
 
-  findOneById(id: number): InterfaceSubject | undefined {
-    return this.bdd.getById<InterfaceSubject>('subjects', id);
-  }
-
-  levelAndSubjectFromName(name: string): InterfaceLevelSubject[] {
-    const subject = this.findAll().find((s) => s.name === name);
-    const levels = this.bddLevels;
-    const filteredLevels = levels.filter((l) => l.id === subject?.levelId);
-    return filteredLevels.map((level) => ({
-      level,
-      subject,
-    }));
+  async levelAndSubjectFromName(name: string): Promise<InterfaceLevelSubject> {
+    const subject = await this.subjectRepository.findOneBy({ name });
+    if (!subject) {
+      throw new Error(`Subject with name ${name} not found`);
+    }
+    return {
+      subject: {
+        id: subject.id,
+        name: subject.name,
+      },
+      level: {
+        id: subject.level?.id ?? 0,
+        name: subject.level?.name ?? '',
+      },
+    };
   }
 
   findFavorite(): string {
