@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: mentor-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: mentor
+    ports:
+      - '5432:5432'
+    volumes:
+      - ../data:/var/lib/postgresql/data
