@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class FirstMigration1747141692893 implements MigrationInterface {
-    name = 'FirstMigration1747141692893'
+export class Amig1747145061775 implements MigrationInterface {
+    name = 'Amig1747145061775'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "subject_entity" ADD "levelId" integer`);

@@ -8,7 +8,8 @@ const options: DataSourceOptions = {
   username: 'root',
   password: 'root',
   database: 'mentor',
-  entities: [__dirname + '/**/**/**/*.entity{.ts,.js}'],
+  entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
+  migrations: [__dirname + '/../migration/*.{ts,js}'],
 };
 
 export const typeOrmModuleOptions: TypeOrmModuleOptions = {
@@ -16,4 +17,4 @@ export const typeOrmModuleOptions: TypeOrmModuleOptions = {
   synchronize: true,
 };
 
-export const connectionSouurce = new DataSource(options);
+export const connectionSource = new DataSource(options);

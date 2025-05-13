@@ -15,7 +15,7 @@ export class SubjectEntity {
   @Column()
   name: string;
 
-  @OneToOne(() => LevelEntity, (level) => level.id)
+  @OneToOne(() => LevelEntity, (level) => level.subject)
   @JoinColumn()
   level?: LevelEntity;
 }
