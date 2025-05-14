@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LevelService } from 'src/level/level.service';
 import { SubjectService } from 'src/subject/subject.service';
@@ -24,7 +24,11 @@ export class AnnounceService {
     const subject = await this.subjectService.findOneByName(subjectName);
 
     if (!level || !subject) {
-      throw new Error('Niveau ou sujet introuvable');
+      throw new HttpException(`bad request`, HttpStatus.BAD_REQUEST);
+    }
+
+    if (price < 0) {
+      throw new HttpException(`price must be positive`, HttpStatus.BAD_REQUEST);
     }
     const announce = this.announceRepository.save({
       price,
@@ -45,12 +49,21 @@ export class AnnounceService {
     const subject = await this.subjectService.findOneByName(subjectName);
 
     if (!level || !subject) {
-      return 'Niveau ou sujet introuvable';
+      throw new HttpException(
+        `level or subject doesn't exists`,
+        HttpStatus.FORBIDDEN,
+      );
     }
     const announce = await this.announceRepository.findOneBy({
       level,
       subject,
     });
+    if (!announce) {
+      throw new HttpException(
+        `No announce found linked to ${levelName} and  ${subjectName}`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     return announce;
   }
 

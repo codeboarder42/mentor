@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { SubjectEntity } from './entities/subject.entity';
 import { InterfacePostSubject } from './subject';
 import { SubjectService } from './subject.service';
@@ -12,21 +19,16 @@ export class SubjectController {
   }
 
   @Get(':id')
-  findOneById(@Param('id') id: string): Promise<SubjectEntity | null> {
-    return this.subjectService.findOneById(+id);
+  findOneById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<SubjectEntity | null> {
+    return this.subjectService.findOneById(id);
   }
 
   @Post()
   addSubject(@Body() subject: InterfacePostSubject): Promise<SubjectEntity> {
     return this.subjectService.createNewSubject(subject);
   }
-
-  // @Get(':name/level/')
-  // findLevelAndSubject(
-  //   @Param('name') name: string,
-  // ): Promise<InterfaceLevelSubject> {
-  //   return this.subjectService.levelAndSubjectFromName(name);
-  // }
 
   @Get('favorite')
   findFavorite(): string {

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
@@ -25,8 +25,15 @@ export class SubjectService {
     return subjectCache;
   }
 
-  findOneById(id: number): Promise<SubjectEntity | null> {
-    return this.subjectRepository.findOneBy({ id });
+  async findOneById(id: number): Promise<SubjectEntity | null> {
+    const subject = await this.subjectRepository.findOneBy({ id });
+    if (!subject) {
+      throw new HttpException(
+        `No subject found with id = ${id}`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return subject;
   }
 
   findOneByName(name: string): Promise<SubjectEntity | null> {
@@ -37,56 +44,15 @@ export class SubjectService {
     name,
     levelId,
   }: InterfacePostSubject): Promise<SubjectEntity> {
+    if (!name || !levelId) {
+      throw new HttpException(`bad request`, HttpStatus.BAD_REQUEST);
+    }
     const newSubject = await this.subjectRepository.save({
       name,
       levelId,
     });
     return newSubject;
   }
-
-  // async levelAndSubjectFromName(name: string): Promise<InterfaceLevelSubject> {
-  //   // Rechercher le sujet avec son niveau associé
-  //   const subject = await this.subjectRepository.findOne({
-  //     where: { name },
-  //     relations: ['level'], // Charge la relation avec le niveau
-  //   });
-
-  //   if (!subject) {
-  //     throw new Error(`Subject with name ${name} not found`);
-  //   }
-
-  //   // Si le niveau n'existe pas (cas improbable mais possible)
-  //   if (!subject.level) {
-  //     return {
-  //       subjects: [
-  //         {
-  //           // Maintenant un tableau avec un seul élément
-  //           id: subject.id,
-  //           name: subject.name,
-  //         },
-  //       ],
-  //       level: {
-  //         id: 0,
-  //         name: '',
-  //       },
-  //     };
-  //   }
-
-  //   // Retourne un objet conforme à l'interface InterfaceLevelSubject modifiée
-  //   return {
-  //     subjects: [
-  //       {
-  //         // Nous mettons le sujet actuel dans un tableau
-  //         id: subject.id,
-  //         name: subject.name,
-  //       },
-  //     ],
-  //     level: {
-  //       id: subject.level.id,
-  //       name: subject.level.name,
-  //     },
-  //   };
-  // }
 
   findFavorite(): string {
     return 'Anglais';
