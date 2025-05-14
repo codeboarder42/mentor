@@ -5,5 +5,4 @@ export type InterfaceSubject = {
 
 export type InterfacePostSubject = {
   name: string;
-  levelId: number;
 };

@@ -42,16 +42,10 @@ export class SubjectService {
 
   async createNewSubject({
     name,
-    levelId,
   }: InterfacePostSubject): Promise<SubjectEntity> {
-    if (!name || !levelId) {
-      throw new HttpException(`bad request`, HttpStatus.BAD_REQUEST);
-    }
-    const newSubject = await this.subjectRepository.save({
+    return this.subjectRepository.save({
       name,
-      levelId,
     });
-    return newSubject;
   }
 
   findFavorite(): string {

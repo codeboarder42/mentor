@@ -15,9 +15,6 @@ export class SubjectEntity {
   @Column()
   name: string;
 
-  @Column() // Rendre la colonne explicite
-  levelId: number;
-
   @OneToMany(() => AnnounceEntity, (announce) => announce.subject)
   @JoinColumn()
   announces: AnnounceEntity[];

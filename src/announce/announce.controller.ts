@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AnnounceService } from './announce.service';
 import { AnnounceEntity } from './entities/announce.entity';
-import { CreateAnnounceDto } from './interface/create-announce';
+import { CreateAnnounceDto } from './interface/create-announce.dto';
+import { SearchQuery } from './interface/search-query';
 
 @Controller('announce')
 export class AnnounceController {
@@ -13,8 +14,7 @@ export class AnnounceController {
 
   @Get('search')
   searchAnnounce(
-    @Query('levelName') levelName: string,
-    @Query('subjectName') subjectName: string,
+    @Query() { levelName, subjectName }: SearchQuery,
   ): Promise<AnnounceEntity | null | string> {
     if (!levelName || !subjectName) {
       throw new Error('Niveau ou sujet introuvable');

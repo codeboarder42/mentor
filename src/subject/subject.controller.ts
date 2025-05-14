@@ -7,7 +7,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { SubjectEntity } from './entities/subject.entity';
-import { InterfacePostSubject } from './subject';
+import { AddSubjectDto } from './interface/add-subject.dto';
+import { FindOneParams } from './interface/find-one-params';
 import { SubjectService } from './subject.service';
 
 @Controller('subject')
@@ -20,13 +21,13 @@ export class SubjectController {
 
   @Get(':id')
   findOneById(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) { id }: FindOneParams,
   ): Promise<SubjectEntity | null> {
     return this.subjectService.findOneById(id);
   }
 
   @Post()
-  addSubject(@Body() subject: InterfacePostSubject): Promise<SubjectEntity> {
+  addSubject(@Body() subject: AddSubjectDto): Promise<SubjectEntity> {
     return this.subjectService.createNewSubject(subject);
   }
 
