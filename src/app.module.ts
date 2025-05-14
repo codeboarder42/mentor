@@ -3,7 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import { ConfigModule } from './config/config.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { AnnounceModule } from './announce/announce.module';
 import { LevelModule } from './level/level.module';
 import { typeOrmModuleOptions } from './ormconfig';
 import { SubjectModule } from './subject/subject.module';
@@ -12,10 +13,9 @@ import { SubjectModule } from './subject/subject.module';
   imports: [
     SubjectModule,
     LevelModule,
-    ConfigModule.forRoot({
-      folder: 'config',
-    }),
     TypeOrmModule.forRoot(typeOrmModuleOptions),
+    CacheModule.register(),
+    AnnounceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

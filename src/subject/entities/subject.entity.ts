@@ -1,9 +1,9 @@
-import { LevelEntity } from 'src/level/entities/level.entity';
+import { AnnounceEntity } from 'src/announce/entities/announce.entity';
 import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -15,10 +15,10 @@ export class SubjectEntity {
   @Column()
   name: string;
 
-  @ManyToOne(() => LevelEntity, (level) => level.subjects) // Notez 'subjects' au pluriel
-  @JoinColumn({ name: 'levelId' }) // Nom explicite de la colonne
-  level: LevelEntity;
-
   @Column() // Rendre la colonne explicite
   levelId: number;
+
+  @OneToMany(() => AnnounceEntity, (announce) => announce.subject)
+  @JoinColumn()
+  announces: AnnounceEntity[];
 }

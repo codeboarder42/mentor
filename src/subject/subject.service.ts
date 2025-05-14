@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConfigService } from 'src/config/config.service';
-import { InterfaceLevelSubject } from 'src/level/level';
+import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 import { SubjectEntity } from './entities/subject.entity';
 import { InterfacePostSubject } from './subject';
@@ -11,15 +10,27 @@ export class SubjectService {
   constructor(
     @InjectRepository(SubjectEntity)
     private subjectRepository: Repository<SubjectEntity>,
-    private configService: ConfigService,
+    @Inject('CACHE_MANAGER')
+    private cacheManager: Cache,
   ) {}
 
-  findAll(): Promise<SubjectEntity[]> {
-    return this.subjectRepository.find();
+  async findAll(): Promise<SubjectEntity[]> {
+    const subjectCache =
+      await this.cacheManager.get<SubjectEntity[]>('findAll');
+    if (!subjectCache) {
+      const subjects = await this.subjectRepository.find();
+      await this.cacheManager.set('findAll', subjects, 0);
+      return subjects;
+    }
+    return subjectCache;
   }
 
   findOneById(id: number): Promise<SubjectEntity | null> {
     return this.subjectRepository.findOneBy({ id });
+  }
+
+  findOneByName(name: string): Promise<SubjectEntity | null> {
+    return this.subjectRepository.findOneBy({ name });
   }
 
   async createNewSubject({
@@ -28,55 +39,56 @@ export class SubjectService {
   }: InterfacePostSubject): Promise<SubjectEntity> {
     const newSubject = await this.subjectRepository.save({
       name,
+      levelId,
     });
     return newSubject;
   }
 
-  async levelAndSubjectFromName(name: string): Promise<InterfaceLevelSubject> {
-    // Rechercher le sujet avec son niveau associé
-    const subject = await this.subjectRepository.findOne({
-      where: { name },
-      relations: ['level'], // Charge la relation avec le niveau
-    });
+  // async levelAndSubjectFromName(name: string): Promise<InterfaceLevelSubject> {
+  //   // Rechercher le sujet avec son niveau associé
+  //   const subject = await this.subjectRepository.findOne({
+  //     where: { name },
+  //     relations: ['level'], // Charge la relation avec le niveau
+  //   });
 
-    if (!subject) {
-      throw new Error(`Subject with name ${name} not found`);
-    }
+  //   if (!subject) {
+  //     throw new Error(`Subject with name ${name} not found`);
+  //   }
 
-    // Si le niveau n'existe pas (cas improbable mais possible)
-    if (!subject.level) {
-      return {
-        subjects: [
-          {
-            // Maintenant un tableau avec un seul élément
-            id: subject.id,
-            name: subject.name,
-          },
-        ],
-        level: {
-          id: 0,
-          name: '',
-        },
-      };
-    }
+  //   // Si le niveau n'existe pas (cas improbable mais possible)
+  //   if (!subject.level) {
+  //     return {
+  //       subjects: [
+  //         {
+  //           // Maintenant un tableau avec un seul élément
+  //           id: subject.id,
+  //           name: subject.name,
+  //         },
+  //       ],
+  //       level: {
+  //         id: 0,
+  //         name: '',
+  //       },
+  //     };
+  //   }
 
-    // Retourne un objet conforme à l'interface InterfaceLevelSubject modifiée
-    return {
-      subjects: [
-        {
-          // Nous mettons le sujet actuel dans un tableau
-          id: subject.id,
-          name: subject.name,
-        },
-      ],
-      level: {
-        id: subject.level.id,
-        name: subject.level.name,
-      },
-    };
-  }
+  //   // Retourne un objet conforme à l'interface InterfaceLevelSubject modifiée
+  //   return {
+  //     subjects: [
+  //       {
+  //         // Nous mettons le sujet actuel dans un tableau
+  //         id: subject.id,
+  //         name: subject.name,
+  //       },
+  //     ],
+  //     level: {
+  //       id: subject.level.id,
+  //       name: subject.level.name,
+  //     },
+  //   };
+  // }
 
   findFavorite(): string {
-    return this.configService.get('FAVORITE_SUBJECT');
+    return 'Anglais';
   }
 }
