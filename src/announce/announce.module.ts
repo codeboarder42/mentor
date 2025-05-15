@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LevelModule } from 'src/level/level.module';
 import { SubjectModule } from 'src/subject/subject.module';
@@ -11,8 +11,8 @@ import { AnnounceEntity } from './entities/announce.entity';
   controllers: [AnnounceController],
   imports: [
     TypeOrmModule.forFeature([AnnounceEntity]),
-    LevelModule,
-    SubjectModule,
+    forwardRef(() => LevelModule),
+    forwardRef(() => SubjectModule),
   ], // Add your entities here
   exports: [AnnounceService],
 })
