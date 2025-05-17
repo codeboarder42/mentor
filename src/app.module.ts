@@ -9,6 +9,7 @@ import { AnnounceModule } from './announce/announce.module';
 import { LevelModule } from './level/level.module';
 import { typeOrmModuleOptions } from './ormconfig';
 import { SubjectModule } from './subject/subject.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SubjectModule } from './subject/subject.module';
     LevelModule,
     SubjectModule,
     AnnounceModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
