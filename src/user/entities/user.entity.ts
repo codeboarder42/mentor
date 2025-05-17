@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AnnounceEntity } from 'src/announce/entities/announce.entity';
+import { CourseEntity } from 'src/course/entities/course.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from '../interface/role';
 
 @Entity()
@@ -23,4 +25,10 @@ export class UserEntity {
     default: Role.Admin,
   })
   role: Role;
+
+  @OneToMany(() => CourseEntity, (course) => course.strudent)
+  courses: CourseEntity[];
+
+  @OneToMany(() => AnnounceEntity, (announce) => announce.teacher)
+  announces: AnnounceEntity[];
 }
