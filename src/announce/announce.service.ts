@@ -1,7 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LevelService } from 'src/level/level.service';
 import { SubjectService } from 'src/subject/subject.service';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { AnnounceEntity } from './entities/announce.entity';
 import { CreateAnnounceDto } from './interface/create-announce.dto';
@@ -13,13 +19,19 @@ export class AnnounceService {
     private announceRepository: Repository<AnnounceEntity>,
     private levelService: LevelService,
     private subjectService: SubjectService,
+    private userService: UserService,
   ) {}
 
   async createAnnounce({
     price,
     level: { name: levelName },
     subject: { name: subjectName },
-  }: CreateAnnounceDto): Promise<AnnounceEntity> {
+    userId,
+  }: CreateAnnounceDto & { userId: number }): Promise<AnnounceEntity> {
+    const user = await this.userService.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException();
+    }
     const level = await this.levelService.findOneByName(levelName);
     if (!level) {
       throw new HttpException(`level is not found`, HttpStatus.NOT_FOUND);
@@ -32,6 +44,7 @@ export class AnnounceService {
       price,
       level,
       subject,
+      teacher: user,
     });
     return announce;
   }

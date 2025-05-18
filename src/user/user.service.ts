@@ -30,4 +30,8 @@ export class UserService {
   async findOne(email: string): Promise<UserEntity | null> {
     return this.userRepository.findOneBy({ email });
   }
+
+  async findOneById(id: number): Promise<UserEntity | null> {
+    return this.userRepository.findOneBy({ id });
+  }
 }
