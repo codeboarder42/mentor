@@ -82,8 +82,8 @@ export class AnnounceService {
     return `This action returns all announce`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} announce`;
+  findOneById(id: number) {
+    return this.announceRepository.findOneBy({ id });
   }
 
   update(id: number) {
