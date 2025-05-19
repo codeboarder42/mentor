@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnnounceService } from 'src/announce/announce.service';
+import { Role } from 'src/user/interface/role';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CourseEntity } from './entities/course.entity';
@@ -39,5 +40,19 @@ export class CourseService {
       hours,
     });
     return course;
+  }
+
+  async findCourses(userId: number): Promise<CourseEntity[] | null> {
+    const user = await this.userService.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.role === Role.Teacher) {
+      const teacheAnnounces = await this.announceService.findAllByUser(user);
+      return teacheAnnounces.flatMap(({ courses }) => courses);
+    }
+
+    return this.courseRepository.findBy({ student: user });
   }
 }

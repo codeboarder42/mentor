@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { LevelService } from 'src/level/level.service';
 import { SubjectService } from 'src/subject/subject.service';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { AnnounceEntity } from './entities/announce.entity';
@@ -78,11 +79,16 @@ export class AnnounceService {
     return announce;
   }
 
-  findAll() {
-    return `This action returns all announce`;
+  async findAllByUser(user: UserEntity) {
+    return this.announceRepository.find({
+      where: {
+        teacher: user,
+      },
+      relations: ['courses'],
+    });
   }
 
-  findOneById(id: number) {
+  async findOneById(id: number) {
     return this.announceRepository.findOneBy({ id });
   }
 
