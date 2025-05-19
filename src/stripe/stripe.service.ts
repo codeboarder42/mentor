@@ -10,7 +10,7 @@ export class StripeService {
     this.stripe = new Stripe(stripeSecretKey);
   }
 
-  public paymentIntentCreate(
+  public createPaymentIntent(
     params: Stripe.PaymentIntentCreateParams,
     options?: Stripe.RequestOptions,
   ) {

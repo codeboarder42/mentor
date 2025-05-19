@@ -13,6 +13,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CourseModule } from './course/course.module';
 import { StripeModule } from './stripe/stripe.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { StripeModule } from './stripe/stripe.module';
     AuthModule,
     CourseModule,
     StripeModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
