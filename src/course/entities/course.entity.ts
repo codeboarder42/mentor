@@ -15,7 +15,7 @@ export class CourseEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.courses)
   @JoinColumn()
-  strudent: UserEntity;
+  student: UserEntity;
 
   @ManyToOne(() => AnnounceEntity, (announce) => announce.courses)
   @JoinColumn()
