@@ -12,6 +12,7 @@ import { SubjectModule } from './subject/subject.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CourseModule } from './course/course.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CourseModule } from './course/course.module';
     UserModule,
     AuthModule,
     CourseModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
