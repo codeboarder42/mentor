@@ -1,4 +1,4 @@
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsDateString, IsNumber, IsPositive } from 'class-validator';
 
 export class createPaymentDto {
   @IsNumber()
@@ -8,4 +8,7 @@ export class createPaymentDto {
   @IsNumber()
   @IsPositive()
   hours: number;
+
+  @IsDateString()
+  date: Date;
 }

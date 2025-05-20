@@ -24,6 +24,7 @@ import { CourseEntity } from './entities/course.entity';
       inject: [ConfigService],
     }),
   ],
+  exports: [CourseService],
 })
 export class CourseModule {}
 

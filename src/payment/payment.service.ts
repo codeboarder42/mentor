@@ -24,6 +24,7 @@ export class PaymentService {
 
   public async createPayment(
     createPaymentParameters: createPaymentDto,
+    userId: number,
   ): Promise<string | null> {
     const amount = await this.calculAmount(createPaymentParameters);
     if (!amount) {
@@ -34,6 +35,12 @@ export class PaymentService {
     const paymentIntent = await this.stripeService.createPaymentIntent({
       amount,
       currency: 'eur',
+      metadata: {
+        announceId: createPaymentParameters.announceId,
+        hours: createPaymentParameters.hours,
+        date: createPaymentParameters.date.toISOString(),
+        userId: 1,
+      },
     });
     return paymentIntent.client_secret;
   }

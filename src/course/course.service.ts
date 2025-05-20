@@ -55,4 +55,26 @@ export class CourseService {
 
     return this.courseRepository.findBy({ student: user });
   }
+
+  async createCourses(
+    announceId: number,
+    hours: number,
+    userId: number,
+    date: Date,
+  ) {
+    const announce = await this.announceService.findOneById(announceId);
+    if (!announce) {
+      throw new NotFoundException('Announce not found');
+    }
+    const user = await this.userService.findOneById(userId);
+    if (!user || user.role !== Role.Student) {
+      throw new NotFoundException('User not found');
+    }
+    const course = this.courseRepository.save({
+      announce,
+      student: user,
+      date,
+      hours,
+    });
+  }
 }
